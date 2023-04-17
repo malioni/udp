@@ -6,6 +6,7 @@
 #include <netinet/in.h>
 #include <unistd.h>
 #include <sys/epoll.h>
+#include <arpa/inet.h>
 
 #define MAX_EVENTS 10
 #define BUF_SIZE 1024
