@@ -7,6 +7,7 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <sys/epoll.h>
+#include <time.h>
 
 #define MAX_EVENTS 10
 #define BUF_SIZE 1024
@@ -91,6 +92,9 @@ int main(int argc, char *argv[]) {
         perror("epoll_ctl");
         exit(EXIT_FAILURE);
     }
+    
+    // Start the clock for time measurement
+    start_time = clock();
 
     int n_sent = 0;
     int n_total = strlen(buffer);
@@ -114,6 +118,11 @@ int main(int argc, char *argv[]) {
             }
         }
     }
+    
+    // End the clock
+    end_time = clock();
+    double elapsed_time = (double)(end_time - start_time) / CLOCKS_PER_SEC;
+    printf("File transfer speed: %.2f MB/s\n", (double)file_size / elapsed_time / (1024 * 1024));
 
     // Close the socket
     close(sock_fd);
