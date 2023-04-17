@@ -36,6 +36,7 @@ int main(int argc, char *argv[]) {
     // Find the size of the file
     fseek(fp, 0, SEEK_END);
     file_size = ftell(fp);
+    printf("File size: %d\n", file_size);
     rewind(fp);
 
     // Allocate enough room in the buffer
@@ -110,7 +111,7 @@ int main(int argc, char *argv[]) {
             if (events[i].events & EPOLLOUT) {
                 // send as much of the message as possible
                 int n_bytes = send(sock_fd, buffer + n_sent, n_total - n_sent, 0);
-                printf("Sending data");
+                printf("Sending data\n");
                 if (n_bytes == -1) {
                     perror("send");
                     exit(EXIT_FAILURE);
