@@ -94,7 +94,7 @@ int main(int argc, char *argv[]) {
     }
     
     // Start the clock for time measurement
-    start_time = clock();
+    clock_t start_time = clock();
 
     int n_sent = 0;
     int n_total = strlen(buffer);
@@ -120,7 +120,7 @@ int main(int argc, char *argv[]) {
     }
     
     // End the clock
-    end_time = clock();
+    clock_t end_time = clock();
     double elapsed_time = (double)(end_time - start_time) / CLOCKS_PER_SEC;
     printf("File transfer speed: %.2f MB/s\n", (double)file_size / elapsed_time / (1024 * 1024));
 
