@@ -26,7 +26,7 @@ int main(int argc, char *argv[]) {
     long file_size;
 
     // Open the file
-    fp = fopen(*file_name, "rb");
+    fp = fopen(file_name, "rb");
     if (fp == NULL) {
         printf("Error opening file\n");
         return 1;
