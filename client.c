@@ -36,7 +36,7 @@ int main(int argc, char *argv[]) {
     // Find the size of the file
     fseek(fp, 0, SEEK_END);
     file_size = ftell(fp);
-    printf("File size: %d\n", file_size);
+    printf("File size: %ld\n", file_size);
     rewind(fp);
 
     // Allocate enough room in the buffer
