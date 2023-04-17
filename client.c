@@ -13,13 +13,43 @@
 
 int main(int argc, char *argv[]) {
     if (argc != 4) {
-        fprintf(stderr, "Usage: %s <ip> <port> <message>\n", argv[0]);
+        fprintf(stderr, "Usage: %s <ip> <port> <file>\n", argv[0]);
         exit(EXIT_FAILURE);
     }
 
     char *ip = argv[1];
     int port = atoi(argv[2]);
-    char *message = argv[3];
+    char *file_name = argv[3];
+    
+    FILE *fp;
+    char *buffer;
+    long file_size;
+
+    // Open the file
+    fp = fopen(*file_name, "rb");
+    if (fp == NULL) {
+        printf("Error opening file\n");
+        return 1;
+    }
+
+    // Find the size of the file
+    fseek(fp, 0, SEEK_END);
+    file_size = ftell(fp);
+    rewind(fp);
+
+    // Allocate enough room in the buffer
+    buffer = (char *)malloc((file_size + 1) * sizeof(char));
+    if (buffer == NULL) {
+        printf("Memory allocation failed\n");
+        return 1;
+    }
+
+    // Read the file into the buffer
+    fread(buffer, file_size, 1, fp);
+    buffer[file_size] = '\0';
+
+    // Close the file
+    fclose(fp);
 
     // create a UDP socket
     int sock_fd = socket(AF_INET, SOCK_DGRAM, 0);
@@ -63,7 +93,7 @@ int main(int argc, char *argv[]) {
     }
 
     int n_sent = 0;
-    int n_total = strlen(message);
+    int n_total = strlen(buffer);
     while (n_sent < n_total) {
         // wait for socket to be available
         int n_ready = epoll_wait(epoll_fd, events, MAX_EVENTS, -1);
@@ -75,7 +105,7 @@ int main(int argc, char *argv[]) {
         for (int i = 0; i < n_ready; i++) {
             if (events[i].events & EPOLLOUT) {
                 // send as much of the message as possible
-                int n_bytes = send(sock_fd, message + n_sent, n_total - n_sent, 0);
+                int n_bytes = send(sock_fd, buffer + n_sent, n_total - n_sent, 0);
                 if (n_bytes == -1) {
                     perror("send");
                     exit(EXIT_FAILURE);
@@ -85,6 +115,9 @@ int main(int argc, char *argv[]) {
         }
     }
 
+    // Close the socket
     close(sock_fd);
+    // Clear the buffer
+    free(buffer);
     return 0;
 }
