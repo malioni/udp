@@ -110,6 +110,7 @@ int main(int argc, char *argv[]) {
             if (events[i].events & EPOLLOUT) {
                 // send as much of the message as possible
                 int n_bytes = send(sock_fd, buffer + n_sent, n_total - n_sent, 0);
+                printf("Sending data");
                 if (n_bytes == -1) {
                     perror("send");
                     exit(EXIT_FAILURE);
