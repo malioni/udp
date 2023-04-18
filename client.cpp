@@ -100,11 +100,11 @@ int main(int argc, char *argv[]) {
         for (int i = 0; i < n_ready; i++) {
             if (events[i].data.fd == sock_fd) {
                 // send as much of the file as possible
-                int size = n_total - n_sent;
-                const char *buffer[BUF_SIZE] = file_contents.substr(n_sent, BUF_SIZE).c_str();
+                int size = std::max(n_total - n_sent, BUF_SIZE);
+                char buffer[BUF_SIZE];
+                strcpy(buffer, file_contents.substr(n_sent, BUF_SIZE-1).c_str());
                 std::cout << "BUFFER: " << buffer << std::endl;
-                int n_bytes = sendto(sock_fd, buffer + n_sent, n_total - n_sent, 0);
-                sendto(sock_fd, buffer, size, 0,(struct sockaddr *)&server_addr, sizeof(server_addr));
+                int n_bytes = sendto(sock_fd, buffer, size, 0,(struct sockaddr *)&server_addr, sizeof(server_addr));
                 std::cout << "Sending data" << std::endl;
                 if (n_bytes < 0) {
                     perror("send failed");
