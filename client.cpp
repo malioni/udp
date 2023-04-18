@@ -89,6 +89,7 @@ int main(int argc, char *argv[]) {
 
     int n_sent = 0;
     int n_total = file_contents.length();
+    std::cout << "N_TOTAL: " << n_total << std::endl;
     while (n_sent < n_total) {
         // wait for socket to be available
         int n_ready = epoll_wait(epoll_fd, events, MAX_EVENTS, -1);
@@ -99,7 +100,7 @@ int main(int argc, char *argv[]) {
         for (int i = 0; i < n_ready; i++) {
             if (events[i].data.fd == sock_fd) {
                 // send as much of the file as possible
-                int size = std::max(n_total - n_sent, BUF_SIZE) - 1;
+                int size = std::min(n_total - n_sent, BUF_SIZE) - 1;
                 char buffer[size];
                 strcpy(buffer, file_contents.substr(n_sent, size).c_str());
                 std::cout << "SUBSTRING: " << file_contents.substr(n_sent, size) << std::endl;
