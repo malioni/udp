@@ -3,7 +3,6 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
-#include <fcntl.h>
 #include <cstring>
 #include <cstdio>
 #include <cstdlib>
@@ -65,9 +64,6 @@ int main(int argc, char *argv[]) {
     server_addr.sin_family = AF_INET;
     server_addr.sin_addr.s_addr = INADDR_ANY;
     server_addr.sin_port = htons(port);
-    
-    // set socket to non-blocking mode
-    fcntl(sock_fd, F_SETFL, O_NONBLOCK);
 
     // Create epoll event and it's file descriptor
     struct epoll_event event, events[MAX_EVENTS];
