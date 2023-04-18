@@ -42,6 +42,7 @@ int main(int argc, char *argv[]) {
     // TODO: Start the clock
     
 
+    std::cout << "Sending the file name" << std::endl;
     // Send the file name
     int n_ready = epoll_wait(epoll_fd, events, MAX_EVENTS, -1);
     if (n_ready < 0) {
@@ -62,6 +63,7 @@ int main(int argc, char *argv[]) {
             }
         }
     }
+   std::cout << "File name sent" << std::endl;
 
     // Send the file contents
     int n_sent = 0;
@@ -80,16 +82,18 @@ int main(int argc, char *argv[]) {
                 int size = std::min(n_total - n_sent, BUF_SIZE);
                 char buffer[size];
                 strcpy(buffer, file_contents.substr(n_sent, size).c_str());
+                std::cout << "Sending a message" << std::endl;
                 int n_bytes = sendto(sock_fd, buffer, size, 0,(struct sockaddr *)&server_addr, sizeof(server_addr));
                 if (n_bytes < 0) {
                     perror("send failed");
                     exit(EXIT_FAILURE);
                 }
                 n_sent += n_bytes;
+                std::cout << "Message sent" << std::endl;
             }
         }
     }
-    
+    std::cout << "Sending the terminating msg" << std::endl;
     // Send the terminating message
     std::string msg(TERMINATING_MSG);
     n_ready = epoll_wait(epoll_fd, events, MAX_EVENTS, -1);
@@ -111,7 +115,9 @@ int main(int argc, char *argv[]) {
             }
         }
     }
+    std::cout << "Terminating msg sent" << std::endl;
     
+    std::cout << "Waiting for response" << std::endl;
     // Wait for response
     event.events = EPOLLIN;
     event.data.fd = sock_fd;
@@ -137,7 +143,7 @@ int main(int argc, char *argv[]) {
             }
         }
     }
-    
+    std::cout << "Response received" << std::endl;
     
     
 //     // TODO: End the clock
