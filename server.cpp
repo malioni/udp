@@ -114,7 +114,6 @@ int main(int argc, char *argv[]) {
                             exit(EXIT_FAILURE);
                         }
                         char response[] = TERMINATING_MSG;
-                        std::cout << "Sending a response to: " << ss.str() << std::endl;
                         int n_bytes = sendto(sock_fd, response, strlen(response), 0,(struct sockaddr *)&client_addr, client_addr_len);
                         if (n_bytes < 0) {
                             perror("response failed");
