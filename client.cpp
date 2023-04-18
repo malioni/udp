@@ -130,7 +130,7 @@ int main(int argc, char *argv[]) {
         if (events[i].data.fd == sock_fd) {
             char buffer[BUF_SIZE];
             
-            int n_bytes = recvfrom(sock_fd, buffer, sizeof(buffer), 0, (struct sockaddr *)&server_addr, &server_addr_len);
+            int n_bytes = recvfrom(sock_fd, buffer, sizeof(buffer), 0, (struct sockaddr *)&server_addr, sizeof(server_addr));
             if (n_bytes < 0) {
                 perror("recvfrom");
                 exit(EXIT_FAILURE);
