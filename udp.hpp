@@ -16,6 +16,7 @@
 #define MAX_EVENTS 10
 #define BUF_SIZE 100
 #define TERMINATING_MSG "########END#OF#MESSAGE########"
+#define DEST_DIR "server_files/"
 
 // Struct used by server to represent a file
 struct transfer_file
@@ -73,7 +74,7 @@ struct sockaddr_in configure_ip_and_port(int port)
 // Function that writes a file
 int write_file(const transfer_file &f)
 {
-  std::string file_path = "server_files/" + f.name.substr(f.name.find_last_of("/") + 1);
+  std::string file_path = DEST_DIR + f.name.substr(f.name.find_last_of("/") + 1);
   // Open file for writing
   std::ofstream outfile(file_path);
 
