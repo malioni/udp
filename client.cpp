@@ -67,11 +67,10 @@ int main(int argc, char *argv[]) {
     server_addr.sin_port = htons(port);
     
     // set socket to non-blocking mode
-    fcntl(client_fd, F_SETFL, O_NONBLOCK);
+    fcntl(sock_fd, F_SETFL, O_NONBLOCK);
 
     // Create epoll event and it's file descriptor
-    struct epoll_event event;
-    std::vector<struct epoll_event> events(MAX_EVENTS);
+    struct epoll_event event, events[MAX_EVENTS];
     int epoll_fd = epoll_create1(0);
     if (epoll_fd == -1) {
         perror("epoll_create1");
@@ -102,13 +101,14 @@ int main(int argc, char *argv[]) {
             if (events[i].data.fd == sock_fd) {
                 // send as much of the file as possible
                 int size = n_total - n_sent;
+                char buffer[std::max(size, BUF_SIZE)];
                 if (size > BUF_SIZE)
                 {
-                    char buffer[BUF_SIZE] = file_contents.substr(n_sent, BUF_SIZE);
+                    buffer = file_contents.substr(n_sent, BUF_SIZE).c_str();
                 }
                 else
                 {
-                    char buffer[size] = file_contents.substr(n_sent);
+                    buffer = file_contents.substr(n_sent).c_str();
                 }
                 std::cout << buffer << std::endl;
                 int n_bytes = sendto(sock_fd, buffer + n_sent, n_total - n_sent, 0);
