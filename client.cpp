@@ -37,12 +37,11 @@ int read_file(const std::string &file_path, std::string &file_contents)
 }
         
 int main(int argc, char *argv[]) {
-    if (argc != 4) {
-        fprintf(stderr, "Usage: %s <ip> <port> <file>\n", argv[0]);
+    if (argc != 3) {
+        fprintf(stderr, "Usage: %s <port> <file>\n", argv[0]);
         exit(EXIT_FAILURE);
     }
 
-    char *ip = argv[1];
     int port = atoi(argv[2]);
     std::string file_name(argv[3]);
     
@@ -53,83 +52,83 @@ int main(int argc, char *argv[]) {
         perror("Error reading the file");
         exit(EXIT_FAILURE);
     }
+
+    // create a UDP socket
+    int sock_fd = socket(AF_INET, SOCK_DGRAM, 0);
+    if (sock_fd < 0) {
+        perror("socket failed");
+        exit(EXIT_FAILURE);
+    }
+
+    // Configure IPv4 and correct port
+    struct sockaddr_in server_addr;
+    server_addr.sin_family = AF_INET;
+    server_addr.sin_addr.s_addr = INADDR_ANY;
+    server_addr.sin_port = htons(port);
     
-    std::cout << file_contents << std::endl;
+    // set socket to non-blocking mode
+    fcntl(client_fd, F_SETFL, O_NONBLOCK);
 
-//     // create a UDP socket
-//     int sock_fd = socket(AF_INET, SOCK_DGRAM, 0);
-//     if (sock_fd == -1) {
-//         perror("socket");
-//         exit(EXIT_FAILURE);
-//     }
+    // Create epoll event and it's file descriptor
+    struct epoll_event event;
+    std::vector<struct epoll_event> events(MAX_EVENTS);
+    int epoll_fd = epoll_create1(0);
+    if (epoll_fd == -1) {
+        perror("epoll_create1");
+        exit(EXIT_FAILURE);
+    }
 
-//     // Clear memory and configure IPv4 and correct port
-//     struct sockaddr_in server_addr;
-//     memset(&server_addr, 0, sizeof(server_addr));
-//     server_addr.sin_family = AF_INET;
-//     server_addr.sin_port = htons(port);
+    // Connect epoll file descriptor to the socket as an outgoing event
+    event.events = EPOLLOUT;
+    event.data.fd = sock_fd;
+    if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, sock_fd, &event) < 0) {
+        perror("epoll_ctl");
+        exit(EXIT_FAILURE);
+    }
     
-//     // Chech that IP address is valid and assign it to server_addr
-//     if (inet_pton(AF_INET, ip, &server_addr.sin_addr) != 1) {
-//         fprintf(stderr, "Invalid address: %s\n", ip);
-//         exit(EXIT_FAILURE);
-//     }
-    
-//     // Connect to the server
-//     if (connect(sock_fd, (struct sockaddr *)&server_addr, sizeof(server_addr)) == -1) {
-//         perror("connect");
-//         exit(EXIT_FAILURE);
-//     }
+    // TODO: Send the file name
 
-//     // Create epoll event and it's file descriptor
-//     struct epoll_event event, events[MAX_EVENTS];
-//     int epoll_fd = epoll_create1(0);
-//     if (epoll_fd == -1) {
-//         perror("epoll_create1");
-//         exit(EXIT_FAILURE);
-//     }
+    int n_sent = 0;
+    int n_total = file_contents.length();
+    while (n_sent < n_total) {
+        // wait for socket to be available
+        int n_ready = epoll_wait(epoll_fd, events, MAX_EVENTS, -1);
+        if (n_ready < 0) {
+            perror("epoll_wait");
+            exit(EXIT_FAILURE);
+        }
 
-//     // Connect epoll file descriptor to the socket as an outgoing event
-//     event.events = EPOLLOUT;
-//     event.data.fd = sock_fd;
-//     if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, sock_fd, &event) == -1) {
-//         perror("epoll_ctl");
-//         exit(EXIT_FAILURE);
-//     }
-    
-//     // Start the clock for time measurement
-//     clock_t start_time = clock();
-
-//     int n_sent = 0;
-//     int n_total = strlen(buffer);
-//     while (n_sent < n_total) {
-//         // wait for socket to be available
-//         int n_ready = epoll_wait(epoll_fd, events, MAX_EVENTS, -1);
-//         if (n_ready == -1) {
-//             perror("epoll_wait");
-//             exit(EXIT_FAILURE);
-//         }
-
-//         for (int i = 0; i < n_ready; i++) {
-//             if (events[i].events & EPOLLOUT) {
-//                 // send as much of the message as possible
-//                 int n_bytes = send(sock_fd, buffer + n_sent, n_total - n_sent, 0);
-//                 printf("Sending data\n");
-//                 if (n_bytes == -1) {
-//                     perror("send");
-//                     exit(EXIT_FAILURE);
-//                 }
-//                 n_sent += n_bytes;
-//             }
-//         }
-//     }
+        for (int i = 0; i < n_ready; i++) {
+            if (events[i].data.fd == sock_fd) {
+                // send as much of the file as possible
+                int size = n_total - n_sent;
+                if (size > BUF_SIZE)
+                {
+                    char buffer[BUF_SIZE] = file_contents.substr(n_sent, BUF_SIZE);
+                }
+                else
+                {
+                    char buffer[size] = file_contents.substr(n_sent);
+                }
+                std::cout << buffer << std::endl;
+                int n_bytes = sendto(sock_fd, buffer + n_sent, n_total - n_sent, 0);
+                sendto(sock_fd, buffer, size, 0,(struct sockaddr *)&server_addr, sizeof(server_addr));
+                std::cout << "Sending data" << std::endl;
+                if (n_bytes < 0) {
+                    perror("send failed");
+                    exit(EXIT_FAILURE);
+                }
+                n_sent += n_bytes;
+            }
+        }
+    }
     
 //     // End the clock
 //     clock_t end_time = clock();
 //     double elapsed_time = (double)(end_time - start_time) / CLOCKS_PER_SEC;
 //     printf("File transfer speed: %.2f MB/s\n", (double)file_size / elapsed_time / (1024 * 1024));
 
-//     // Close the socket
-//     close(sock_fd);
+    // Close the socket
+    close(sock_fd);
     return 0;
 }
