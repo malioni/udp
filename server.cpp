@@ -81,7 +81,7 @@ int main(int argc, char *argv[]) {
                 }
                 event.events = EPOLLIN | EPOLLET;
                 event.data.fd = client_fd;
-                if (epoll_ctl(epollfd, EPOLL_CTL_ADD, client_fd,&event) == -1) 
+                if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, client_fd,&event) == -1) 
                 {
                     perror("epoll_ctl: client_fd");
                     exit(EXIT_FAILURE);
