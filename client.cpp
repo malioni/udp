@@ -11,7 +11,7 @@ int main(int argc, char *argv[]) {
     
     std::string file_contents;
     // read the file
-    if (read_file(file_name, file_contents) == 0)
+    if (read_file(file_name, file_contents) != 0)
     {
         perror("Error reading the file");
         exit(EXIT_FAILURE);
