@@ -107,8 +107,6 @@ int main(int argc, char *argv[]) {
                     exit(EXIT_FAILURE);
                 }
                 n_sent += n_bytes;
-                std::cout << size << std::endl;
-                std::cout << n_sent << std::endl;
             }
         }
     }
