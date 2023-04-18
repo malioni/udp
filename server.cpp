@@ -9,16 +9,27 @@
 #include <cstdlib>
 #include <sys/epoll.h>
 #include <vector>
-#include <string.h>
+#include <string>
+#include <map>
+#include <sstream>
 
 #define MAX_EVENTS 10
 #define BUF_SIZE 1024
+
+struct file_to_write
+{
+    std::string name;
+    std::string contents;
+}
 
 int main(int argc, char *argv[]) {
     if (argc != 2) {
         fprintf(stderr, "Usage: %s <port>\n", argv[0]);
         exit(EXIT_FAILURE);
     }
+    
+    map<std::string, file_to_write> m_sock_to_file;
+    std::stringstream ss;
 
     int port = atoi(argv[1]);
 
@@ -79,6 +90,10 @@ int main(int argc, char *argv[]) {
                     perror("recvfrom");
                     exit(EXIT_FAILURE);
                 }
+                
+                ss.clear();
+                ss << inet_ntoa(client_addr.sin_addr) << ":" << ntohs(client_addr.sin_port);
+                std::cout << ss.str() << std::endl;
 
                 printf("Received message from %s:%d: %.*s\n",
                        inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port),
