@@ -102,7 +102,7 @@ int main(int argc, char *argv[]) {
                 // send as much of the file as possible
                 int size = std::min(n_total - n_sent, BUF_SIZE);
                 char buffer[size];
-                strcpy(buffer, file_contents.substr(n_sent, size).c_str());
+                strcpy(buffer, file_contents.substr(n_sent, size-1).c_str()); // leave space for terminating character
                 std::cout << "BUFFER: ";
                 for (int i = 0; i < size; i++)
                 {
