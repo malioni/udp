@@ -100,7 +100,7 @@ int main(int argc, char *argv[]) {
         for (int i = 0; i < n_ready; i++) {
             if (events[i].data.fd == sock_fd) {
                 // send as much of the file as possible
-                int size = std::min(n_total - n_sent, BUF_SIZE) - 1;
+                int size = std::min(n_total - n_sent, BUF_SIZE);
                 char buffer[size];
                 strcpy(buffer, file_contents.substr(n_sent, size).c_str());
                 std::cout << "SUBSTRING: " << file_contents.substr(n_sent, size) << std::endl;
