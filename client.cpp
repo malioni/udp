@@ -106,12 +106,13 @@ int main(int argc, char *argv[]) {
                 char buffer[size];
                 strcpy(buffer, file_contents.substr(n_sent, size).c_str());
                 int n_bytes = sendto(sock_fd, buffer, size, 0,(struct sockaddr *)&server_addr, sizeof(server_addr));
-                std::cout << "Sending data" << std::endl;
                 if (n_bytes < 0) {
                     perror("send failed");
                     exit(EXIT_FAILURE);
                 }
                 n_sent += n_bytes;
+                std::cout << size << std::endl;
+                std::cout << n_bytes << std::endl;
             }
         }
     }
