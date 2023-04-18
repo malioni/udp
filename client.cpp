@@ -129,8 +129,8 @@ int main(int argc, char *argv[]) {
     for (int i = 0; i < n_ready; i++) {
         if (events[i].data.fd == sock_fd) {
             char buffer[BUF_SIZE];
-            
-            int n_bytes = recvfrom(sock_fd, buffer, sizeof(buffer), 0, (struct sockaddr *)&server_addr, sizeof(server_addr));
+            socklen_t server_addr_len = sizeof(server_addr);
+            int n_bytes = recvfrom(sock_fd, buffer, sizeof(buffer), 0, (struct sockaddr *)&server_addr, &server_addr_len);
             if (n_bytes < 0) {
                 perror("recvfrom");
                 exit(EXIT_FAILURE);
