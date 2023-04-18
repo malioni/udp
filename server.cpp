@@ -52,7 +52,7 @@ int main(int argc, char *argv[]) {
     }
 
     // Specify that events are incoming to the server
-    event.events = EPOLLIN | EPOLLOUT;
+    event.events = EPOLLIN;
     for (int i = 0; i < ports_size; i++)
     {
         event.data.fd = sockets.at(i);
@@ -106,13 +106,13 @@ int main(int argc, char *argv[]) {
                     {
                         std::cout << "Terminating message received from: " << ss.str() << std::endl;
                         // Send a response
-//                         event.events = EPOLLIN | EPOLLOUT;
-//                         event.data.fd = sock_fd;
-//                         if (epoll_ctl(epoll_fd, EPOLL_CTL_MOD, sock_fd, &event) == -1)
-//                         {
-//                             perror("epoll_ctl mod");
-//                             exit(EXIT_FAILURE);
-//                         }
+                        event.events = EPOLLIN | EPOLLOUT;
+                        event.data.fd = sock_fd;
+                        if (epoll_ctl(epoll_fd, EPOLL_CTL_MOD, sock_fd, &event) == -1)
+                        {
+                            perror("epoll_ctl mod");
+                            exit(EXIT_FAILURE);
+                        }
                         char response[] = TERMINATING_MSG;
                         std::cout << "Sending a response to: " << ss.str() << std::endl;
                         int n_bytes = sendto(sock_fd, response, strlen(response), 0,(struct sockaddr *)&client_addr, client_addr_len);
@@ -122,13 +122,13 @@ int main(int argc, char *argv[]) {
                         }
                         std::cout << "Response sent to: " << ss.str() << std::endl;
                         // Revert back to inputs only
-//                         event.events = EPOLLIN;
-//                         event.data.fd = sock_fd;
-//                         if (epoll_ctl(epoll_fd, EPOLL_CTL_MOD, sock_fd, &event) == -1)
-//                         {
-//                             perror("epoll_ctl mod");
-//                             exit(EXIT_FAILURE);
-//                         }
+                        event.events = EPOLLIN;
+                        event.data.fd = sock_fd;
+                        if (epoll_ctl(epoll_fd, EPOLL_CTL_MOD, sock_fd, &event) == -1)
+                        {
+                            perror("epoll_ctl mod");
+                            exit(EXIT_FAILURE);
+                        }
                         
                         // Write file
                         std::cout << "Writing the file received from: " << ss.str() << std::endl;
