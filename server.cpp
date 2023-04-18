@@ -63,7 +63,6 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    char buffer[BUF_SIZE];
     while (1) {
         // Wait for events to happen
         int n_ready = epoll_wait(epoll_fd, events, MAX_EVENTS, -1);
@@ -76,6 +75,7 @@ int main(int argc, char *argv[]) {
             // Check that events occurred on on of the sockets
             if ( std::find(sockets.begin(), sockets.end(), events[i].data.fd) != sockets.end() )
             {
+                char buffer[BUF_SIZE];
                 int sock_fd = events[i].data.fd;
                 struct sockaddr_in client_addr;
                 socklen_t client_addr_len = sizeof(client_addr);
