@@ -91,22 +91,20 @@ int main(int argc, char *argv[]) {
                 // Convert IP address and port to string to be used as an identifier of the client
                 ss.str(std::string());
                 ss << inet_ntoa(client_addr.sin_addr) << ":" << ntohs(client_addr.sin_port);
-                std::cout << ss.str() << std::endl;
                 
                 // if a new client, the first message is the file name
                 if (m_sock_to_file.find(ss.str()) == m_sock_to_file.end())
                 {
-                    std::cout << "Receiving file name" << std::endl;
+                    std::cout << "File name received from: " << ss.str() << std::endl;
                     m_sock_to_file[ss.str()].name = buffer;
                 }
                 else
                 {
                     // if an existing client, check whether the message is the terminating message
-                    std::cout << "Receiving a message" << std::endl;
                     std::string msg(buffer);
                     if (msg == TERMINATING_MSG)
                     {
-                        std::cout << "Terminating message received" << std::endl;
+                        std::cout << "Terminating message received from: " << ss.str() << std::endl;
                         // Send a response
                         event.events = EPOLLIN | EPOLLOUT;
                         event.data.fd = sock_fd;
@@ -116,13 +114,13 @@ int main(int argc, char *argv[]) {
                             exit(EXIT_FAILURE);
                         }
                         char response[] = TERMINATING_MSG;
-                        std::cout << "Sending a response" << std::endl;
+                        std::cout << "Sending a response to: " << ss.str() << std::endl;
                         int n_bytes = sendto(sock_fd, response, strlen(response), 0,(struct sockaddr *)&client_addr, client_addr_len);
                         if (n_bytes < 0) {
                             perror("response failed");
                             exit(EXIT_FAILURE);
                         }
-                        std::cout << "Response sent" << std::endl;
+                        std::cout << "Response sent to: " << ss.str() << std::endl;
                         // Revert back to inputs only
                         event.events = EPOLLIN;
                         event.data.fd = sock_fd;
@@ -133,6 +131,7 @@ int main(int argc, char *argv[]) {
                         }
                         
                         // Write file
+                        std::cout << "Writing the file received from: " << ss.str() << std::endl;
                         int write = write_file(m_sock_to_file[ss.str()]);
                         // Delete client from map
                         m_sock_to_file.erase(ss.str());
@@ -140,7 +139,7 @@ int main(int argc, char *argv[]) {
                     else
                     {
                         // Add the message to the contents of the file
-                        std::cout << "Received a non-terminating message" << std::endl;
+                        std::cout << "Received some of the file contents from: " << ss.str() << std::endl;
                         std::cout << msg << std::endl;
                         m_sock_to_file[ss.str()].contents << buffer;
                     }
