@@ -96,15 +96,14 @@ int main(int argc, char *argv[]) {
             perror("epoll_wait");
             exit(EXIT_FAILURE);
         }
-        std::cout << "POINT1" << std::endl;
         for (int i = 0; i < n_ready; i++) {
             if (events[i].data.fd == sock_fd) {
                 // send as much of the file as possible
                 int size = std::max(n_total - n_sent, BUF_SIZE) - 1;
-                std::cout << "POINT2" << std::endl;
                 const char* buffer = file_contents.substr(n_sent, size).c_str();
+                std::cout << "SUBSTRING: " << file_contents.substr(n_sent, size) << std::endl;
+                std::cout << "C STRING: " << file_contents.substr(n_sent, size).c_str() << std::endl;
                 std::cout << "BUFFER: " << buffer << std::endl;
-                std::cout << "POINT3" << std::endl;
                 int n_bytes = sendto(sock_fd, buffer, size, 0,(struct sockaddr *)&server_addr, sizeof(server_addr));
                 std::cout << "Sending data" << std::endl;
                 if (n_bytes < 0) {
