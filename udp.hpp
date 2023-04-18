@@ -14,7 +14,7 @@
 #include <fcntl.h>
 
 #define MAX_EVENTS 10
-#define BUF_SIZE 1024
+#define BUF_SIZE 100
 #define TERMINATING_MSG "########END#OF#MESSAGE########"
 
 // Struct used by server to represent a file
