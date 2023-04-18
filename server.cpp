@@ -79,10 +79,9 @@ int main(int argc, char *argv[]) {
                     perror("accept");
                     exit(EXIT_FAILURE);
                 }
-                setnonblocking(client_fd);
-                ev.events = EPOLLIN | EPOLLET;
-                ev.data.fd = conn_sock;
-                if (epoll_ctl(epollfd, EPOLL_CTL_ADD, conn_sock,&ev) == -1) 
+                event.events = EPOLLIN | EPOLLET;
+                event.data.fd = client_fd;
+                if (epoll_ctl(epollfd, EPOLL_CTL_ADD, client_fd,&event) == -1) 
                 {
                     perror("epoll_ctl: client_fd");
                     exit(EXIT_FAILURE);
@@ -97,7 +96,7 @@ int main(int argc, char *argv[]) {
 
                 printf("Received message from %s:%d: %.*s\n",
                        inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port),
-                       n_bytes, buf);
+                       n_bytes, buffer);
             }
             else
             {
