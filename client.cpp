@@ -117,6 +117,7 @@ int main(int argc, char *argv[]) {
                 }
                 n_sent += n_bytes;
                 std::cout << "SIZE: " << size << std::endl;
+                std::cout << "N_BYTES: " << n_bytes << std::endl;
                 std::cout << "N_SENT: " << n_sent << std::endl;
             }
         }
