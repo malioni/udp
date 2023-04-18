@@ -34,6 +34,7 @@ int read_file(const std::string &file_path, std::string &file_contents)
     }
     
     return 0;
+}
         
 int main(int argc, char *argv[]) {
     if (argc != 4) {
