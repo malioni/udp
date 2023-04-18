@@ -71,7 +71,7 @@ int main(int argc, char *argv[]) {
     double elapsed_time = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count() / 1000000.0;
     double transfer_speed = (double)(n_bytes) / (elapsed_time * 1024 * 1024);
     std::cout << "Transfer speed: " << transfer_speed / 1000000 << " MB/s" << std::endl;
-    start_time = end_time
+    start_time = end_time;
 
     // Send the file contents
     int n_sent = 0;
