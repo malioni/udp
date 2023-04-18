@@ -101,7 +101,7 @@ int main(int argc, char *argv[]) {
             if (events[i].data.fd == sock_fd) {
                 // send as much of the file as possible
                 int size = n_total - n_sent;
-                char buffer[std::max(size, BUF_SIZE)];
+                char *buffer[std::max(size, BUF_SIZE)];
                 if (size > BUF_SIZE)
                 {
                     buffer = file_contents.substr(n_sent, BUF_SIZE).c_str();
