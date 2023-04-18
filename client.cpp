@@ -13,7 +13,7 @@
 #include <fstream>
 
 #define MAX_EVENTS 10
-#define BUF_SIZE 17
+#define BUF_SIZE 18
 
 int read_file(const std::string &file_path, std::string &file_contents)
 {
@@ -112,7 +112,7 @@ int main(int argc, char *argv[]) {
                 }
                 n_sent += n_bytes;
                 std::cout << size << std::endl;
-                std::cout << n_bytes << std::endl;
+                std::cout << n_sent << std::endl;
             }
         }
     }
