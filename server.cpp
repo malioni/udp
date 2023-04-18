@@ -10,8 +10,8 @@ int main(int argc, char *argv[]) {
     
     std::map<std::string, file_to_write> m_sock_to_file;
     std::stringstream ss;
-    vector<int> ports;
-    vector<int> sockets;
+    std::vector<int> ports;
+    std::vector<int> sockets;
     
     for (int i = 1; i < argc; i++)
     {
