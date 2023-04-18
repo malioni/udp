@@ -140,7 +140,6 @@ int main(int argc, char *argv[]) {
                     {
                         // Add the message to the contents of the file
                         std::cout << "Received some of the file contents from: " << ss.str() << std::endl;
-                        std::cout << msg << std::endl;
                         m_sock_to_file[ss.str()].contents << buffer;
                     }
                 }
