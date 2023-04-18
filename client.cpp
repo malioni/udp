@@ -42,8 +42,8 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    int port = atoi(argv[2]);
-    std::string file_name(argv[3]);
+    int port = atoi(argv[1]);
+    std::string file_name(argv[2]);
     
     std::string file_contents;
     // read the file
