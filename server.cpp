@@ -99,7 +99,7 @@ int main(int argc, char *argv[]) {
                 {
                     std::cout << "Assigning name" << std::endl;
                     m_sock_to_file[ss.str()].name = buffer;
-                    std::cout << m_sock_to_file[ss.str()].buffer << std::endl;
+                    std::cout << m_sock_to_file[ss.str()].name << std::endl;
                 }
                 else
                 {
