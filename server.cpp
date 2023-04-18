@@ -91,7 +91,7 @@ int main(int argc, char *argv[]) {
                     exit(EXIT_FAILURE);
                 }
                 
-                ss.clear();
+                ss.str(std::string());
                 ss << inet_ntoa(client_addr.sin_addr) << ":" << ntohs(client_addr.sin_port);
                 std::cout << ss.str() << std::endl;
 
