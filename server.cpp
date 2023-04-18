@@ -94,6 +94,19 @@ int main(int argc, char *argv[]) {
                 ss.str(std::string());
                 ss << inet_ntoa(client_addr.sin_addr) << ":" << ntohs(client_addr.sin_port);
                 std::cout << ss.str() << std::endl;
+                
+                if (m_sock_to_file.find(ss.str()) == m.end())
+                {
+                    std::cout << "Assigning name" << std::endl;
+                    m_sock_to_file[ss.str()].name = buffer;
+                    std::cout << m_sock_to_file[ss.str()].buffer << std::endl;
+                }
+                else
+                {
+                    std::cout << "Assigning contents" << std::endl;
+                    m_sock_to_file[ss.str()].contents += buffer;
+                    std::cout << m_sock_to_file[ss.str()].contents << std::endl;
+                }
 
                 printf("Received message from %s:%d: %.*s\n",
                        inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port),
