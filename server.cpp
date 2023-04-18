@@ -73,20 +73,6 @@ int main(int argc, char *argv[]) {
                 struct sockaddr_in client_addr;
                 socklen_t client_addr_len = sizeof(client_addr);
                 
-                int client_fd = accept(sock_fd, (struct sockaddr *) &client_addr, &client_addr_len);
-                if (client_fd == -1) 
-                {
-                    perror("accept");
-                    exit(EXIT_FAILURE);
-                }
-                event.events = EPOLLIN | EPOLLET;
-                event.data.fd = client_fd;
-                if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, client_fd,&event) == -1) 
-                {
-                    perror("epoll_ctl: client_fd");
-                    exit(EXIT_FAILURE);
-                }
-                
                 int n_bytes = recvfrom(sock_fd, buffer, sizeof(buffer), 0,
                                        (struct sockaddr *)&client_addr, &client_addr_len);
                 if (n_bytes < 0) {
@@ -97,11 +83,6 @@ int main(int argc, char *argv[]) {
                 printf("Received message from %s:%d: %.*s\n",
                        inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port),
                        n_bytes, buffer);
-            }
-            else
-            {
-                // Save the additional info coming in
-                std::cout << "In the else statement" << std::endl;
             }
         }
     }
