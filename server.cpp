@@ -8,7 +8,7 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
     
-    std::map<std::string, file_to_write> m_sock_to_file;
+    std::map<std::string, transfer_file> m_sock_to_file;
     std::stringstream ss;
     std::vector<int> ports;
     std::vector<int> sockets;
@@ -23,7 +23,7 @@ int main(int argc, char *argv[]) {
     // Create sockets
     for (int i = 0; i < ports_size; i++)
     {
-        sockets.append(create_socket());
+        sockets.push_back(create_socket());
     }
     
     for (int i = 0; i < ports_size; i++)
@@ -111,7 +111,7 @@ int main(int argc, char *argv[]) {
                             perror("epoll_ctl mod");
                             exit(EXIT_FAILURE);
                         }
-                        char* response = TERMINATING_MSG;
+                        char response[] = TERMINATING_MSG;
                         int n_bytes = sendto(sock_fd, response, strlen(response), 0,(struct sockaddr *)&client_addr, &client_addr_len);
                         if (n_bytes < 0) {
                             perror("response failed");
