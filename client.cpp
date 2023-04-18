@@ -70,7 +70,7 @@ int main(int argc, char *argv[]) {
     std::cout << "File name sent" << std::endl;
     double elapsed_time = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count() / 1000000.0;
     double transfer_speed = (double)(n_bytes) / (elapsed_time);
-    std::cout << "Transfer speed: " << transfer_speed / 1000000 << " B/s" << std::endl;
+    std::cout << "Transfer speed: " << transfer_speed << " B/s" << std::endl;
     start_time = end_time;
 
     // Send the file contents
@@ -101,7 +101,7 @@ int main(int argc, char *argv[]) {
                 end_time = std::chrono::steady_clock::now();
                 elapsed_time = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count() / 1000000.0;
                 transfer_speed = (double)(n_bytes) / (elapsed_time);
-                std::cout << "Transfer speed: " << transfer_speed / 1000000 << " B/s" << std::endl;
+                std::cout << "Transfer speed: " << transfer_speed << " B/s" << std::endl;
                 start_time = end_time;
             }
         }
@@ -132,11 +132,11 @@ int main(int argc, char *argv[]) {
     end_time = std::chrono::steady_clock::now();
     elapsed_time = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count() / 1000000.0;
     transfer_speed = (double)(n_bytes) / (elapsed_time);
-    std::cout << "Transfer speed: " << transfer_speed / 1000000 << " B/s" << std::endl;
+    std::cout << "Transfer speed: " << transfer_speed << " B/s" << std::endl;
     
     elapsed_time = std::chrono::duration_cast<std::chrono::microseconds>(end_time - total_start_time).count() / 1000000.0;
     transfer_speed = (double)(n_total) / (elapsed_time);
-    std::cout << "Total file transfer speed: " << transfer_speed / 1000000 << " B/s" << std::endl;
+    std::cout << "Total file transfer speed: " << transfer_speed << " B/s" << std::endl;
     std::cout << "Total time: " << elapsed_time << std::endl;
     
     std::cout << "Waiting for response" << std::endl;
