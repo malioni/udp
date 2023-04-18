@@ -76,6 +76,7 @@ int main(int argc, char *argv[]) {
             if ( std::find(sockets.begin(), sockets.end(), events[i].data.fd) != sockets.end() )
             {
                 char buffer[BUF_SIZE];
+                memset(&buffer[0], 0, sizeof(buffer));
                 int sock_fd = events[i].data.fd;
                 struct sockaddr_in client_addr;
                 socklen_t client_addr_len = sizeof(client_addr);
