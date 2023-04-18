@@ -66,6 +66,7 @@ int main(int argc, char *argv[]) {
         }
     }
     auto end_time = std::chrono::steady_clock::now();
+    double elapsed_time, transfer_speed;
 
     // Send the file contents
     int n_sent = 0;
