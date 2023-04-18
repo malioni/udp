@@ -1,3 +1,4 @@
+#include <chrono>
 #include "udp.hpp"
    
 int main(int argc, char *argv[]) {
@@ -38,13 +39,15 @@ int main(int argc, char *argv[]) {
         perror("epoll_ctl");
         exit(EXIT_FAILURE);
     }
-    
-    // TODO: Start the clock
-    
-
+   
+    // start measuring time
     std::cout << "Sending the file name" << std::endl;
+    auto start_time = std::chrono::steady_clock::now();
+    auto total_start_time = start_time;
+
     // Send the file name
     int n_ready = epoll_wait(epoll_fd, events, MAX_EVENTS, -1);
+    int n_bytes;
     if (n_ready < 0) {
         perror("epoll_wait");
         exit(EXIT_FAILURE);
@@ -63,7 +66,12 @@ int main(int argc, char *argv[]) {
             }
         }
     }
-   std::cout << "File name sent" << std::endl;
+    auto end_time = std::chrono::steady_clock::now();
+    std::cout << "File name sent" << std::endl;
+    double elapsed_time = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count() / 1000000.0;
+    double transfer_speed = (double)(n_bytes) / (elapsed_time * 1024 * 1024);
+    std::cout << "Transfer speed: " << transfer_speed / 1000000 << " MB/s" << std::endl;
+    start_time = end_time
 
     // Send the file contents
     int n_sent = 0;
@@ -83,13 +91,18 @@ int main(int argc, char *argv[]) {
                 char buffer[size];
                 strcpy(buffer, file_contents.substr(n_sent, size).c_str());
                 std::cout << "Sending a message" << std::endl;
-                int n_bytes = sendto(sock_fd, buffer, size, 0,(struct sockaddr *)&server_addr, sizeof(server_addr));
+                n_bytes = sendto(sock_fd, buffer, size, 0,(struct sockaddr *)&server_addr, sizeof(server_addr));
                 if (n_bytes < 0) {
                     perror("send failed");
                     exit(EXIT_FAILURE);
                 }
                 n_sent += n_bytes;
                 std::cout << "Message sent" << std::endl;
+                end_time = std::chrono::steady_clock::now();
+                elapsed_time = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count() / 1000000.0;
+                transfer_speed = (double)(n_bytes) / (elapsed_time * 1024 * 1024);
+                std::cout << "Transfer speed: " << transfer_speed / 1000000 << " MB/s" << std::endl;
+                start_time = end_time
             }
         }
     }
@@ -108,7 +121,7 @@ int main(int argc, char *argv[]) {
             int size = msg.length();
             char buffer[size];
             strcpy(buffer, msg.c_str());
-            int n_bytes = sendto(sock_fd, buffer, size, 0,(struct sockaddr *)&server_addr, sizeof(server_addr));
+            n_bytes = sendto(sock_fd, buffer, size, 0,(struct sockaddr *)&server_addr, sizeof(server_addr));
             if (n_bytes < 0) {
                 perror("send failed");
                 exit(EXIT_FAILURE);
@@ -116,6 +129,15 @@ int main(int argc, char *argv[]) {
         }
     }
     std::cout << "Terminating msg sent" << std::endl;
+    end_time = std::chrono::steady_clock::now();
+    elapsed_time = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count() / 1000000.0;
+    transfer_speed = (double)(n_bytes) / (elapsed_time * 1024 * 1024);
+    std::cout << "Transfer speed: " << transfer_speed / 1000000 << " MB/s" << std::endl;
+    
+    elapsed_time = std::chrono::duration_cast<std::chrono::microseconds>(end_time - total_start_time).count() / 1000000.0;
+    transfer_speed = (double)(n_total) / (elapsed_time * 1024 * 1024);
+    std::cout << "Total file transfer speed: " << transfer_speed / 1000000 << " MB/s" << std::endl;
+    std::cout << "Total time: " << elapsed_time << std::endl;
     
     std::cout << "Waiting for response" << std::endl;
     // Wait for response
