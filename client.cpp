@@ -41,7 +41,6 @@ int main(int argc, char *argv[]) {
     }
    
     // start measuring time
-    std::cout << "Sending the file name" << std::endl;
     auto start_time = std::chrono::steady_clock::now();
     auto total_start_time = start_time;
 
@@ -67,11 +66,6 @@ int main(int argc, char *argv[]) {
         }
     }
     auto end_time = std::chrono::steady_clock::now();
-    std::cout << "File name sent" << std::endl;
-    double elapsed_time = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count() / 1000000.0;
-    double transfer_speed = (double)(n_bytes) / (elapsed_time * 1024);
-    std::cout << "Transfer speed: " << transfer_speed << " KB/s" << std::endl;
-    start_time = end_time;
 
     // Send the file contents
     int n_sent = 0;
@@ -97,16 +91,15 @@ int main(int argc, char *argv[]) {
                     exit(EXIT_FAILURE);
                 }
                 n_sent += n_bytes;
-                std::cout << "Message sent" << std::endl;
+                std::cout << "Message sent "
                 end_time = std::chrono::steady_clock::now();
                 elapsed_time = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count() / 1000000.0;
                 transfer_speed = (double)(n_bytes) / (elapsed_time * 1024);
-                std::cout << "Transfer speed: " << transfer_speed << " KB/s" << std::endl;
+                std::cout << "with transfer speed: " << transfer_speed << " KB/s" << std::endl;
                 start_time = end_time;
             }
         }
     }
-    std::cout << "Sending the terminating msg" << std::endl;
     // Send the terminating message
     std::string msg(TERMINATING_MSG);
     n_ready = epoll_wait(epoll_fd, events, MAX_EVENTS, -1);
@@ -128,16 +121,10 @@ int main(int argc, char *argv[]) {
             }
         }
     }
-    std::cout << "Terminating msg sent" << std::endl;
     end_time = std::chrono::steady_clock::now();
-    elapsed_time = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count() / 1000000.0;
-    transfer_speed = (double)(n_bytes) / (elapsed_time * 1024);
-    std::cout << "Transfer speed: " << transfer_speed << " KB/s" << std::endl;
-    
     elapsed_time = std::chrono::duration_cast<std::chrono::microseconds>(end_time - total_start_time).count() / 1000000.0;
     transfer_speed = (double)(n_total) / (elapsed_time * 1024);
     std::cout << "Total file transfer speed: " << transfer_speed << " KB/s" << std::endl;
-    std::cout << "Total time: " << elapsed_time << std::endl;
     
     std::cout << "Waiting for response" << std::endl;
     // Wait for response
@@ -166,12 +153,6 @@ int main(int argc, char *argv[]) {
         }
     }
     std::cout << "Response received" << std::endl;
-    
-    
-//     // TODO: End the clock
-//     clock_t end_time = clock();
-//     double elapsed_time = (double)(end_time - start_time) / CLOCKS_PER_SEC;
-//     printf("File transfer speed: %.2f MB/s\n", (double)file_size / elapsed_time / (1024 * 1024));
 
     // Close the socket
     close(sock_fd);
