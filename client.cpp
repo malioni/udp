@@ -91,7 +91,7 @@ int main(int argc, char *argv[]) {
                     exit(EXIT_FAILURE);
                 }
                 n_sent += n_bytes;
-                std::cout << "Message sent "
+                std::cout << "Message sent ";
                 end_time = std::chrono::steady_clock::now();
                 elapsed_time = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count() / 1000000.0;
                 transfer_speed = (double)(n_bytes) / (elapsed_time * 1024);
