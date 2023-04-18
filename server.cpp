@@ -20,7 +20,7 @@ struct file_to_write
 {
     std::string name;
     std::string contents;
-}
+};
 
 int main(int argc, char *argv[]) {
     if (argc != 2) {
@@ -28,7 +28,7 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
     
-    map<std::string, file_to_write> m_sock_to_file;
+    std::map<std::string, file_to_write> m_sock_to_file;
     std::stringstream ss;
 
     int port = atoi(argv[1]);
