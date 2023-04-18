@@ -103,6 +103,8 @@ int main(int argc, char *argv[]) {
                 int size = std::min(n_total - n_sent, BUF_SIZE);
                 char buffer[size];
                 strcpy(buffer, file_contents.substr(n_sent, size-1).c_str()); // leave space for terminating character
+                std::cout << "C_STR SIZE WO -1: " << file_contents.substr(n_sent, size).c_str() << std::endl;
+                std::cout << "C_STR SIZE W -1: " << file_contents.substr(n_sent, size-1).c_str() << std::endl;
                 std::cout << "BUFFER: ";
                 for (int i = 0; i < size; i++)
                 {
