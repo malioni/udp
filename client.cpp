@@ -103,7 +103,11 @@ int main(int argc, char *argv[]) {
                 int size = std::max(n_total - n_sent, BUF_SIZE);
                 char buffer[BUF_SIZE];
                 strcpy(buffer, file_contents.substr(n_sent, BUF_SIZE-1).c_str());
-                std::cout << "BUFFER: " << buffer << std::endl;
+                std::cout << "BUFFER: ";
+                for (int i = 0; i < size; i++) {
+                    std::cout << buffer[i];
+                }
+                std::cout << std::endl;
                 int n_bytes = sendto(sock_fd, buffer, size, 0,(struct sockaddr *)&server_addr, sizeof(server_addr));
                 std::cout << "Sending data" << std::endl;
                 if (n_bytes < 0) {
