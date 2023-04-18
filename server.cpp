@@ -140,6 +140,7 @@ int main(int argc, char *argv[]) {
                     {
                         // Add the message to the contents of the file
                         std::cout << "Received a non-terminating message" << std::endl;
+                        std::cout << msg << std::endl;
                         m_sock_to_file[ss.str()].contents << buffer;
                     }
                 }
