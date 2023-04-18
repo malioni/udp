@@ -13,7 +13,7 @@
 #include <fstream>
 
 #define MAX_EVENTS 10
-#define BUF_SIZE 1024
+#define BUF_SIZE 17
 
 int read_file(const std::string &file_path, std::string &file_contents)
 {
@@ -85,11 +85,13 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
     
+    // TODO: Start the clock
+    
     // TODO: Send the file name
 
     int n_sent = 0;
     int n_total = file_contents.length();
-    std::cout << "N_TOTAL: " << n_total << std::endl;
+
     while (n_sent < n_total) {
         // wait for socket to be available
         int n_ready = epoll_wait(epoll_fd, events, MAX_EVENTS, -1);
@@ -110,14 +112,13 @@ int main(int argc, char *argv[]) {
                     exit(EXIT_FAILURE);
                 }
                 n_sent += n_bytes;
-                std::cout << "SIZE: " << size << std::endl;
-                std::cout << "N_BYTES: " << n_bytes << std::endl;
-                std::cout << "N_SENT: " << n_sent << std::endl;
             }
         }
     }
     
-//     // End the clock
+    // TODO: Send a finished message
+    
+//     // TODO: End the clock
 //     clock_t end_time = clock();
 //     double elapsed_time = (double)(end_time - start_time) / CLOCKS_PER_SEC;
 //     printf("File transfer speed: %.2f MB/s\n", (double)file_size / elapsed_time / (1024 * 1024));
