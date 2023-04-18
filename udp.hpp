@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <cstdio>
 #include <cstdlib>
+#include <cstring>
 #include <sys/epoll.h>
 #include <vector>
 #include <string>
@@ -17,7 +18,7 @@
 #define TERMINATING_MSG "########END#OF#MESSAGE########"
 
 // Struct used by server to represent a file
-struct file_to_write
+struct transfer_file
 {
     std::string name;
     std::stringstream contents;
@@ -70,7 +71,7 @@ struct sockaddr_in configure_ip_and_port(int port)
 }
 
 // Function that writes a file
-int write_file(file_to_write f)
+int write_file(const transfer_file &f)
 {
   std::string file_path = "server_files/" + f.name.substr(f.name.find_last_of("/") + 1);
   // Open file for writing
