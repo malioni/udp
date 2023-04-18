@@ -95,7 +95,7 @@ int main(int argc, char *argv[]) {
                 ss << inet_ntoa(client_addr.sin_addr) << ":" << ntohs(client_addr.sin_port);
                 std::cout << ss.str() << std::endl;
                 
-                if (m_sock_to_file.find(ss.str()) == m.end())
+                if (m_sock_to_file.find(ss.str()) == m_sock_to_file.end())
                 {
                     std::cout << "Assigning name" << std::endl;
                     m_sock_to_file[ss.str()].name = buffer;
