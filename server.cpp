@@ -1,12 +1,15 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/types.h>
+#include <iostream>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include <unistd.h>
-#include <sys/epoll.h>
 #include <arpa/inet.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <cstring>
+#include <cstdio>
+#include <cstdlib>
+#include <sys/epoll.h>
+#include <vector>
+#include <string.h>
 
 #define MAX_EVENTS 10
 #define BUF_SIZE 1024
@@ -28,7 +31,6 @@ int main(int argc, char *argv[]) {
 
     // Reset memory and specify IPv4, any IP address and port number
     struct sockaddr_in server_addr;
-    memset(&server_addr, 0, sizeof(server_addr));
     server_addr.sin_family = AF_INET;
     server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
     server_addr.sin_port = htons(port);
@@ -39,6 +41,9 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
 
+    // set socket to non-blocking mode
+    fcntl(sock_fd, F_SETFL, O_NONBLOCK);
+    
     // Create epoll event and field descriptor
     struct epoll_event event, events[MAX_EVENTS];
     int epoll_fd = epoll_create1(0);
@@ -55,7 +60,7 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    char buf[BUF_SIZE];
+    char buffer[BUF_SIZE];
     while (1) {
         int n_ready = epoll_wait(epoll_fd, events, MAX_EVENTS, -1);
         if (n_ready < 0) {
@@ -67,8 +72,23 @@ int main(int argc, char *argv[]) {
             if (events[i].data.fd == sock_fd) {
                 struct sockaddr_in client_addr;
                 socklen_t client_addr_len = sizeof(client_addr);
-
-                int n_bytes = recvfrom(sock_fd, buf, sizeof(buf), 0,
+                
+                int client_fd = accept(sock_fd, (struct sockaddr *) &client_addr, &client_addr_len);
+                if (client_fd == -1) 
+                {
+                    perror("accept");
+                    exit(EXIT_FAILURE);
+                }
+                setnonblocking(client_fd);
+                ev.events = EPOLLIN | EPOLLET;
+                ev.data.fd = conn_sock;
+                if (epoll_ctl(epollfd, EPOLL_CTL_ADD, conn_sock,&ev) == -1) 
+                {
+                    perror("epoll_ctl: client_fd");
+                    exit(EXIT_FAILURE);
+                }
+                
+                int n_bytes = recvfrom(sock_fd, buffer, sizeof(buffer), 0,
                                        (struct sockaddr *)&client_addr, &client_addr_len);
                 if (n_bytes < 0) {
                     perror("recvfrom");
@@ -78,6 +98,11 @@ int main(int argc, char *argv[]) {
                 printf("Received message from %s:%d: %.*s\n",
                        inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port),
                        n_bytes, buf);
+            }
+            else
+            {
+                // Save the additional info coming in
+                std::cout << "In the else statement" << std::endl;
             }
         }
     }
