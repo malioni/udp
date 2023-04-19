@@ -24,7 +24,7 @@ int main(int argc, char *argv[]) {
     // Configure IPv4 and correct port
     struct sockaddr_in server_addr = configure_ip_and_port(port);
 
-    // Create epoll event and it's file descriptor
+    // Create epoll event and its file descriptor
     struct epoll_event event, events[MAX_EVENTS];
     int epoll_fd = epoll_create1(0);
     if (epoll_fd == -1) {
@@ -44,7 +44,7 @@ int main(int argc, char *argv[]) {
     auto start_time = std::chrono::steady_clock::now();
     auto total_start_time = start_time;
 
-    // Send the file name
+    // Send the file name, file name should not exceed 1024 bytes
     int n_ready = epoll_wait(epoll_fd, events, MAX_EVENTS, -1);
     int n_bytes;
     if (n_ready < 0) {
@@ -65,6 +65,7 @@ int main(int argc, char *argv[]) {
             }
         }
     }
+    // Create end_time, elapsed_time, transfer_speed variables used later in the program
     auto end_time = std::chrono::steady_clock::now();
     double elapsed_time, transfer_speed;
 
@@ -96,7 +97,7 @@ int main(int argc, char *argv[]) {
                 end_time = std::chrono::steady_clock::now();
                 elapsed_time = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count() / 1000000.0;
                 transfer_speed = (double)(n_bytes) / (elapsed_time * 1024);
-                std::cout << "with transfer speed: " << transfer_speed << " KB/s" << std::endl;
+                std::cout << "with transfer speed: " << transfer_speed << " kB/s" << std::endl;
                 start_time = end_time;
             }
         }
@@ -111,7 +112,7 @@ int main(int argc, char *argv[]) {
     
     for (int i = 0; i < n_ready; i++) {
         if (events[i].data.fd == sock_fd) {
-            // send the file name
+            // send the terminating message
             int size = msg.length();
             char buffer[size];
             strcpy(buffer, msg.c_str());
@@ -125,7 +126,7 @@ int main(int argc, char *argv[]) {
     end_time = std::chrono::steady_clock::now();
     elapsed_time = std::chrono::duration_cast<std::chrono::microseconds>(end_time - total_start_time).count() / 1000000.0;
     transfer_speed = (double)(n_total) / (elapsed_time * 1024);
-    std::cout << "Total file transfer speed: " << transfer_speed << " KB/s" << std::endl;
+    std::cout << "Total file transfer speed: " << transfer_speed << " kB/s" << std::endl;
     
     std::cout << "Waiting for response" << std::endl;
     // Wait for response
@@ -157,5 +158,5 @@ int main(int argc, char *argv[]) {
 
     // Close the socket
     close(sock_fd);
-    return 0;
+    exit(EXIT_SUCCESS);
 }
