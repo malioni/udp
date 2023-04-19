@@ -1,3 +1,6 @@
+#ifndef UDP_HPP
+#define UDP_HPP
+
 #include <iostream>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -12,6 +15,7 @@
 #include <fstream>
 #include <sstream>
 #include <fcntl.h>
+#include <csignal>
 
 #define MAX_EVENTS 10
 #define BUF_SIZE 100
@@ -24,6 +28,13 @@ struct transfer_file
     std::string name;
     std::stringstream contents;
 };
+
+volatile sig_atomic_t flag = 0;
+
+// Function that responds to SIGINT
+void sigint_handler(int sig) {
+    flag = 1;
+}
 
 // Function that reads file contents, returns integer whether it was successful or not
 int read_file(const std::string &file_path, std::string &file_contents)
@@ -50,45 +61,48 @@ int read_file(const std::string &file_path, std::string &file_contents)
 // Function that creates a socket
 int create_socket()
 {
-  int sock_fd = socket(AF_INET, SOCK_DGRAM, 0);
-  if (sock_fd < 0)
-  {
-  perror("socket");
-  exit(EXIT_FAILURE);
-  }
-  
-  return sock_fd;
+    int sock_fd = socket(AF_INET, SOCK_DGRAM, 0);
+    if (sock_fd < 0)
+    {
+        perror("socket");
+        exit(EXIT_FAILURE);
+    }
+    
+    return sock_fd;
 }
 
 // Function that configures IPv4 and port
 struct sockaddr_in configure_ip_and_port(int port)
 {
-  struct sockaddr_in server_addr;
-  server_addr.sin_family = AF_INET;
-  server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-  server_addr.sin_port = htons(port);
+    struct sockaddr_in server_addr;
+    server_addr.sin_family = AF_INET;
+    server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+    server_addr.sin_port = htons(port);
   
-  return server_addr;
+    return server_addr;
 }
 
 // Function that writes a file
 int write_file(const transfer_file &f)
 {
-  std::string file_path = DEST_DIR + f.name.substr(f.name.find_last_of("/") + 1);
-  // Open file for writing
-  std::ofstream outfile(file_path);
+    std::string file_path = DEST_DIR + f.name.substr(f.name.find_last_of("/") + 1);
+    // Open file for writing
+    std::ofstream outfile(file_path);
 
-  // Check if file was opened successfully
-  if (!outfile.is_open()) {
-    perror("Error opening file");
-    return 1;
-  }
+    // Check if file was opened successfully
+    if (!outfile.is_open()) 
+    {
+        perror("Error opening file");
+        return 1;
+    }
 
-  // Write stringstream contents to file
-  outfile << f.contents.rdbuf();
+    // Write stringstream contents to file
+    outfile << f.contents.rdbuf();
 
-  // Close file
-  outfile.close();
+    // Close file
+    outfile.close();
 
-  return 0;
+    return 0;
 }
+
+#endif
