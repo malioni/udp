@@ -32,3 +32,5 @@ Implemented file transfer protocol is as follows:
 2) The client then sends the file contents in 1024 byte increments, which the server receives and combines.
 3) After all file contents have been sent, the client sends a terminating message (currently defined as "########END#OF#MESSAGE########") to indicate that all file contents have been sent. Note that having this message as part of a file could potentially break the program.
 4) When the server receives the terminating message, it sends the same message back to the client to indicate that it has been received. 
+
+With the current implementation the server saves the entire file in memory before writing it, which can cause issues with very large file transfers.
