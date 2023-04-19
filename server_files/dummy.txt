@@ -1,0 +1,1 @@
+GitHub does not allow empty directories, this file is a placeholder so that server_files directory could exist.
