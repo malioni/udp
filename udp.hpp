@@ -18,7 +18,7 @@
 #include <csignal>
 
 #define MAX_EVENTS 10
-#define BUF_SIZE 100
+#define BUF_SIZE 1024
 #define TERMINATING_MSG "########END#OF#MESSAGE########"
 #define DEST_DIR "server_files/"
 
