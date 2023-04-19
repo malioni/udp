@@ -20,6 +20,7 @@ Note that the server saves files in a `./server_files` directory, which has to b
 ```
 mkdir server_files
 ```
+The server can be stopped by sending SIGINT (CTRL+C).
 
 The client requires the port number and the file to be specified as command-line arguments. For example:
 ```
