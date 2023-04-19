@@ -16,10 +16,7 @@ or
 ```
 ./server 49000 8080
 ```
-Note that the server saves files in a `./server_files` directory, which has to be created beforehand by running the following command in the same directory as the server.cpp file:
-```
-mkdir server_files
-```
+Note that the server saves files in a `./server_files` directory.
 The server can be stopped by sending SIGINT (CTRL+C).
 
 The client requires the port number and the file to be specified as command-line arguments. For example:
