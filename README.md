@@ -55,3 +55,7 @@ Terminating message received from: 127.0.0.1:50513
 Response sent to: 127.0.0.1:50513
 Writing the file received from: 127.0.0.1:50513
 ```
+
+# Testing
+
+Testing was performed manually by starting a server and then starting up to 4 clients using 2 different ports, and then manually verifying that the 4 indicated files have been transferred to `server_files` directory.
