@@ -3,10 +3,14 @@
 #include "udp.hpp"
 
 int main(int argc, char *argv[]) {
-    if (argc < 2) {
+    if (argc < 2) 
+    {
         fprintf(stderr, "Usage: %s <ports>\n", argv[0]);
         exit(EXIT_FAILURE);
     }
+    
+    // Register the signal handler for SIGINT
+    signal(SIGINT, sigint_handler);
     
     std::map<std::string, transfer_file> m_sock_to_file;
     std::stringstream ss;
@@ -34,11 +38,11 @@ int main(int argc, char *argv[]) {
         // Bind socket's name to address
         if (bind(sockets.at(i), (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0)
         {
-        perror("bind");
-        exit(EXIT_FAILURE);
+            perror("bind");
+            exit(EXIT_FAILURE);
         }
         
-        // Set socket to non-blocking
+        // Set socket to non-blocking so that one socket does not block the others
         fcntl(sockets.at(i), F_SETFL, O_NONBLOCK);
         
     }
@@ -63,7 +67,7 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    while (1) {
+    while (!flag) {
         // Wait for events to happen
         int n_ready = epoll_wait(epoll_fd, events, MAX_EVENTS, -1);
         if (n_ready < 0) {
@@ -83,7 +87,8 @@ int main(int argc, char *argv[]) {
                 
                 // Receive the information
                 int n_bytes = recvfrom(sock_fd, buffer, sizeof(buffer), 0, (struct sockaddr *)&client_addr, &client_addr_len);
-                if (n_bytes < 0) {
+                if (n_bytes < 0) 
+                {
                     perror("recvfrom");
                     exit(EXIT_FAILURE);
                 }
@@ -132,6 +137,12 @@ int main(int argc, char *argv[]) {
                         // Write file
                         std::cout << "Writing the file received from: " << ss.str() << std::endl;
                         int write = write_file(m_sock_to_file[ss.str()]);
+                        if (write != 0)
+                        {
+                            perror("write_file failed");
+                            exit(EXIT_FAILURE);
+                        }
+                        
                         // Delete client from map
                         m_sock_to_file.erase(ss.str());
                     }
@@ -145,6 +156,8 @@ int main(int argc, char *argv[]) {
             }
         }
     }
+    
+    std::cout << "Exiting while loop" << std::endl;
 
     // Close all ports
     for (int i = 0; i < ports_size; i++)
