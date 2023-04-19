@@ -156,8 +156,6 @@ int main(int argc, char *argv[]) {
             }
         }
     }
-    
-    std::cout << "Exiting while loop" << std::endl;
 
     // Close all ports
     for (int i = 0; i < ports_size; i++)
