@@ -35,3 +35,26 @@ Implemented file transfer protocol is as follows:
 4) When the server receives the terminating message, it sends the same message back to the client to indicate that it has been received. 
 
 With the current implementation the server saves the entire file in memory before writing it, which can cause issues with very large file transfers.
+
+# Example Outputs
+Client:
+```
+matiss@ubuntu:~/udp$ ./client 8080 client_files/test.txt 
+Sending a message
+Message sent with transfer speed: 1988.07 kB/s
+Sending a message
+Message sent with transfer speed: 871.556 kB/s
+Total file transfer speed: 835.449 kB/s
+Waiting for response
+Response received
+```
+Server:
+```
+matiss@ubuntu:~/udp$ ./server 49000 8080
+File name received from: 127.0.0.1:50513
+Received some of the file contents from: 127.0.0.1:50513
+Received some of the file contents from: 127.0.0.1:50513
+Terminating message received from: 127.0.0.1:50513
+Response sent to: 127.0.0.1:50513
+Writing the file received from: 127.0.0.1:50513
+```
